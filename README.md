@@ -6,6 +6,8 @@ This project is merged from the [SamuBrain](https://github.com/nbatfai/SamuBrain
 
 ## SamuKnows, exp. 8, cognitive mental organs: MPU (Mental Processing Unit), acquiring higher-order knowledge
 
+### SamuBrain
+
 Currently I am working on a manuscript titled "Samu in His Prenatal Development" where I want to establish a definition of a mathematical machine for learning. It is for this reason that I have made various experiments on the subject.
 
 The project called SamuBrain is an implementation of a version of the definition in question. In this experiment, I have been investigating the possibility of developing a "cognitive mental organ" which is called Mental Processing Unit (or briefly MPU) in the terminology of the sources of this project.
@@ -19,6 +21,9 @@ a [COP](http://arxiv.org/abs/1108.2865)-based
 3. a simple "film" is shown (https://github.com/nbatfai/SamuMovie)
 
 The agent must learn and recognize these complex patterns. It is shown in video at https://youtu.be/_W0Ep2HpJSQ
+
+### SamuKnows
+
 
 ## Usage
 

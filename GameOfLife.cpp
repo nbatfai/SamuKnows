@@ -250,6 +250,12 @@ void GameOfLife::control_Conway ( char **prevLattice, char **nextLattice )
 
 void GameOfLife::control_Movie ( char **nextLattice )
 {
+  control_Movie ( nextLattice, 0 );
+}
+
+
+void GameOfLife::control_Movie ( char **nextLattice, int part )
+{
   if ( m_time %3 ==0 )
     {
 
@@ -275,9 +281,18 @@ void GameOfLife::control_Movie ( char **nextLattice )
         }
     }
 
-  house ( nextLattice, housex, 3*m_h/5 -6 );
-  car ( nextLattice, carx, 3*m_h/5 +1 );
-  man ( nextLattice, manx, 3*m_h/5-1 );
+  if ( part == 1 )
+    house ( nextLattice, housex, 3*m_h/5 -6 );
+  else if ( part == 2 )
+    car ( nextLattice, carx, 3*m_h/5 +1 );
+  else if ( part == 3 )
+    man ( nextLattice, manx, 3*m_h/5-1 );
+  else
+    {
+      house ( nextLattice, housex, 3*m_h/5 -6 );
+      car ( nextLattice, carx, 3*m_h/5 +1 );
+      man ( nextLattice, manx, 3*m_h/5-1 );
+    }
 
 }
 
@@ -360,7 +375,7 @@ void GameOfLife::development()
   char **nextLattice = lattices[ ( latticeIndex+1 ) %2];
 
   clear_lattice ( nextLattice );
-
+/*
   if ( m_time == 1 )
     {
       //clear_lattice ( nextLattice );
@@ -383,6 +398,24 @@ void GameOfLife::development()
   else if ( m_time < 22000 )
     {
       control_Movie ( nextLattice );
+    }
+  else
+    {
+      m_time = -1;
+    }
+*/
+
+if ( m_time < 1000 )
+    {
+      control_Movie ( nextLattice, 1 );
+    }
+  else if ( m_time < 3000 )
+    {
+      control_Movie ( nextLattice, 2 );
+    }
+  else if ( m_time < 7000 )
+    {
+      control_Movie ( nextLattice, 3 );
     }
   else
     {

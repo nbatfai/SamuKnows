@@ -98,6 +98,7 @@ class GameOfLife : public QThread
     void control_Stroop ( char **nextLattice );
     void control_Conway ( char **, char **nextLattice );
     void control_Movie ( char **nextLattice );
+    void control_Movie ( char **nextLattice, int );
 
 void ticker(char **lattice, std::string &);
     

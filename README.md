@@ -20,9 +20,13 @@ a [COP](http://arxiv.org/abs/1108.2865)-based
 2. 9 simple "pictures" are shown (https://github.com/nbatfai/SamuStroop)
 3. a simple "film" is shown (https://github.com/nbatfai/SamuMovie)
 
-The agent must learn and recognize these complex patterns. It is shown in video at https://youtu.be/_W0Ep2HpJSQ
+In the project SamuBrain, the agent must learn and recognize these complex patterns. It is shown in video at https://youtu.be/_W0Ep2HpJSQ
 
 ### SamuKnows
+
+Here the video of SamuMovie is divided into its three subcomponents: the house, the can and the man. 
+First I teach the agent to recognize these standalone subcomponents. 
+Then the agent should detect the house and the moving car and man in the original SamuMovie video.
 
 
 ## Usage

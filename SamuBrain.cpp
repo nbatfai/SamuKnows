@@ -1174,7 +1174,7 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
                    << "bogocertainty of convergence:"
                    << mon*100 << "%";
 
-          if ( h.is_newinput ( vsum, sum ) && !m_habituation && mon != -1.0  /*&& mon != 1.0*/ )
+          if ( h.is_newinput ( vsum, sum ) && !m_habituation /*&& mon != -1.0*/  /*&& mon != 1.0*/ )
             {
               qDebug() << "   SENSITIZATION MONITOR:"
                        << m_internal_clock

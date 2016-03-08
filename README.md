@@ -24,7 +24,7 @@ In the project SamuBrain, the agent must learn and recognize these complex patte
 
 ### SamuKnows
 
-Here the video of SamuMovie is divided into its three subcomponents: the house, the can and the man. 
+Here the video of SamuMovie is divided into its three subcomponents: the house, the car and the man. 
 First I teach the agent to recognize these standalone subcomponents. 
 Then the agent should detect the house and the moving car and man in the original SamuMovie video.
 

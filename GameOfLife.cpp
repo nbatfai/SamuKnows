@@ -417,6 +417,10 @@ if ( m_time < 1000 )
     {
       control_Movie ( nextLattice, 3 );
     }
+  else if ( m_time < 12000 )
+    {
+      control_Movie ( nextLattice);
+    }
   else
     {
       m_time = -1;

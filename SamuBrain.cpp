@@ -468,7 +468,8 @@ void SamuBrain::apred ( /*MORGAN morgan*/ int r, int c, char **reality, char **p
 
             SPOTriplet response = samuQl[r][c] ( reality[r][c], prg, isLearning == 0 );
 
-            if ( reality[r][c] )
+     //       if ( reality[r][c] )
+	    if (prev[r][c] && reality[r][c] )
               {
                 ++morgan->vsum;
                 if ( reality[r][c] == prev[r][c] )
@@ -724,16 +725,17 @@ int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isL
           //  prev[r][c] = samuQl[r][c].action();// mintha a samuQl hívása után a predikciót mentettem volna el (B)
           //predictions[r][c] =  prev[r][c];
 
-
+/*
           qDebug() << "   PPP:"
                    << m_internal_clock
                    << ( int ) reality[r][c]
                    << prg << "%";
-
+*/
 
           SPOTriplet response = samuQl[r][c] ( reality[r][c], prg, isLearning == 0 );
 
-          if ( reality[r][c] )
+          //if ( reality[r][c] )
+if ( prev[r][c] && reality[r][c])	  
             //if ( ( predictions[r][c] == reality[r][c] ) && ( reality[r][c] != 0 ) )
             {
               ++vsum;
@@ -852,7 +854,12 @@ bool SamuBrain::is_habituation ( int q, int w, int e, int r, int t, int z, int &
 
 bool Habituation::is_newinput ( int vsum, int sum ) //, double &mon )
 {
+  if(!sum && !vsum)
+  return (( sum <= masum+1 ) || ( vsum <= mavsum+1 )) && (masum-sum >2);
+  else
+//  return ( sum <= masum+1 ) || ( vsum <= mavsum+1 );
   return ( sum < masum ) || ( vsum < mavsum );
+  
 }
 
 bool Habituation::is_habituation ( int vsum, int sum, double &mon )
@@ -1051,10 +1058,17 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
                                  << "bogocertainty of convergence:"
                                  << mon*100 << "%";
           */
-          if ( habi || mon >= 1.0 ) //.9 )
+          if ( habi || mon >= 1.0) //.9 )//1.0 ) //.9 )
             {
               maxSamuQl = mpu.second;
               ++ell;
+	      
+	      
+          qDebug() << "   KNOWLEDGE MONITOR:"
+                   << m_internal_clock
+                   << "[DETECTED] MPU:" << mpu.first.c_str()
+                   << "ELL" << ell;
+	      
             }
 
           qDebug() << "   HABITUATION MONITOR:"
@@ -1063,7 +1077,28 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
                    << "bogocertainty of convergence:"
                    << mon*100 << "%" << "ELL" << ell;
 
+		   
+/*
+                  if ( h.is_newinput ( vsum, sum ) && !m_habituation )
+            {
+              qDebug() << "   SENSITIZATION MONITOR:"
+                       << m_internal_clock
+                       << "(new input detected)";
+
+              m_searching = true;
+              m_searchingStart = m_internal_clock;
+
+              init_MPUs ( false );
+
+            }		  
+*/            
+            
+            
         }
+        
+
+
+        
       /*
               }
       	}

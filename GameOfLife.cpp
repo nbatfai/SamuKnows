@@ -405,19 +405,23 @@ void GameOfLife::development()
     }
 */
 
-if ( m_time < 1000 )
-    {
-      control_Movie ( nextLattice, 1 );
-    }
-  else if ( m_time < 3000 )
-    {
-      control_Movie ( nextLattice, 2 );
-    }
-  else if ( m_time < 7000 )
+if ( m_time < 4000 )
     {
       control_Movie ( nextLattice, 3 );
     }
+  else if ( m_time < 8000 )
+    {
+      control_Movie ( nextLattice, 1 );
+    }
   else if ( m_time < 12000 )
+    {
+      control_Movie ( nextLattice, 2 );
+    }
+  else if ( m_time < 16000 )
+    {
+      control_Movie ( nextLattice, 1 );
+    }
+  else if ( m_time < 20000 )
     {
       control_Movie ( nextLattice);
     }

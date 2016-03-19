@@ -34,6 +34,24 @@ Then the agent should detect the house and the moving car and man in the origina
 
 Using the selection mechanism of SamuVocab for detecting sub-processes looks like a dead-end so I return to the original SamuBrain: [https://youtu.be/MLOeNNqd2Nw](https://youtu.be/MLOeNNqd2Nw)
 
+```
+git clone https://github.com/nbatfai/SamuKnows.git
+cd SamuKnows/
+git checkout vSamuBrain
+~/Qt/5.5/gcc_64/bin/qmake SamuLife.pro
+make
+./SamuKnows 2>out
+```
+
+```
+tail -f out|grep "HIGHER-ORDER NOTION MONITOR"
+```
+
+```
+tail -f out|grep SENSITIZATION
+```
+
+
 ## Previous other experiments
 
 Samu (Nahshon)

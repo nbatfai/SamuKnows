@@ -78,15 +78,15 @@ MentalProcessingUnit::MentalProcessingUnit ( int w, int h ) : m_w ( w ), m_h ( h
       m_samuQl[i] = new QL [m_w];
     }
 
-  m_prev = new char*[m_h];
-  fp = new char*[m_h];
-  fr = new char*[m_h];
+  m_prev = new int*[m_h];
+  fp = new int*[m_h];
+  fr = new int*[m_h];
 
   for ( int i {0}; i<m_h; ++i )
     {
-      m_prev[i] = new char [m_w];
-      fp[i] = new char [m_w];
-      fr[i] = new char [m_w];
+      m_prev[i] = new int [m_w];
+      fp[i] = new int [m_w];
+      fr[i] = new int [m_w];
     }
 
   for ( int r {0}; r<m_h; ++r )
@@ -192,17 +192,17 @@ double SamuBrain::howMuchLearned ( MPU samuQl ) const
 }
 */
 
-int SamuBrain::pred ( char **reality, char **predictions, int isLearning, int & vsum )
+int SamuBrain::pred ( int **reality, int **predictions, int isLearning, int & vsum )
 {
   return pred ( m_morgan, reality, predictions, isLearning, vsum );
 }
 
 /*
-int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isLearning, int & vsum )
+int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLearning, int & vsum )
 {
 
   MPU samuQl = morgan->getSamu();
-  char ** prev = morgan->getPrev();
+  int ** prev = morgan->getPrev();
 
   //double img_input[40];
   int colors[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -299,235 +299,16 @@ int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isL
 }
 */
 
-
-void SamuBrain::apred ( /*MORGAN morgan*/ int r, int c, char **reality, char **predictions, int isLearning )
-{
-
-
-
-  /*
-  for ( int r {0}; r<m_h; ++r )
-    {
-      for ( int c {0}; c<m_w; ++c )
-        {
-  */
-
-
-  int colors[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  unsigned long long prg {1};
-
-
-
-  //std::stringstream ss;
-  int ii {0};
-
-  for ( int ci {0}; ci<5; ++ci )
-    {
-      colors[ci] = 0;
-    }
-
-  for ( int i {-1}; i<2; ++i )
-    for ( int j {-1}; j<2; ++j )
-
-      if ( ! ( ( i==0 ) && ( j==0 ) ) )
-
-        {
-          int o = c + j;
-          if ( o < 0 )
-            {
-              o = m_w-1;
-            }
-          else if ( o >= m_w )
-            {
-              o = 0;
-            }
-
-          int s = r + i;
-          if ( s < 0 )
-            {
-              s = m_h-1;
-            }
-          else if ( s >= m_h )
-            {
-              s = 0;
-            }
-
-          ++colors[reality[s][o]];
-
-
-        } // if
-
-  /*
-  prg *= prime[colors[0]];
-  prg *= prime[colors[1]];
-  prg *= prime[colors[2]];
-  prg *= prime[colors[3]];
-  prg *= prime[colors[4]];
-  */
-
-  prg *= prime[colors[0]];
-  prg *= prime[10+colors[1]];
-  prg *= prime[2*10+colors[2]];
-  prg *= prime[3*10+colors[3]];
-  prg *= prime[4*10+colors[4]];
-          prg *= prime[5*10+reality[r][c]];
-
-  /*
-  ss << reality[r][c];
-  ss << '|';
-  ss << colors[0]; //img_input[1];
-  ss << '|';
-  ss << colors[1];
-  ss << '|';
-  ss << colors[2];
-  ss << '|';
-  ss << colors[3];
-  ss << '|';
-  ss << colors[4];
-
-  std::string prg = ss.str();
-  */
-
-  /*
-    unsigned long long prg {1};
-
-    prg *= prime[0];
-    prg *= prime[13+reality[r][c]];
-
-    if ( c>2 )
-      {
-        prg *= prime[1];
-        prg *= prime[14+ reality[r][c-1]]; //img_input[1];
-        prg *= prime[2];
-        prg *= prime[15+  reality[r][c-2]]; //img_input[1];
-        prg *= prime[3];
-        prg *= prime[16+  reality[r][c-3]]; //img_input[1];
-
-      }
-    else if ( c>1 )
-      {
-        prg *= prime[4];
-        prg *= prime[17+  reality[r][c-1]]; //img_input[1];
-        prg *= prime[5];
-        prg *= prime[18+  reality[r][c-2]]; //img_input[1];
-
-      }
-    else if ( c >0 )
-      {
-        prg *= prime[6];
-        prg *= prime[19+  reality[r][c-1]]; //img_input[1];
-      }
-
-    if ( c<m_w-3 )
-      {
-        prg *= prime[7];
-        prg *= prime[20+  reality[r][c+1]]; //img_input[1];
-        prg *= prime[8];
-        prg *= prime[21+  reality[r][c+2]]; //img_input[1];
-        prg *= prime[9];
-        prg *= prime[22+  reality[r][c+3]]; //img_input[1];
-
-
-      }
-    else if ( c<m_w-2 )
-      {
-        prg *= prime[10];
-        prg *= prime[23+  reality[r][c+1]]; //img_input[1];
-        prg *= prime[11];
-        prg *= prime[24+  reality[r][c+2]]; //img_input[1];
-      }
-    else if ( c <m_w-1 )
-      {
-        prg *= prime[12];
-        prg *= prime[25+  reality[r][c+1]]; //img_input[1];
-      }
-  */
-
-  /*
-  qDebug() << "   PPP:"
-         << m_internal_clock
-         << prg << "%";
-  */
-
-  #pragma omp parallel
-  {
-    #pragma omp single
-    {
-
-      for ( auto mpu : m_brain )
-        {
-
-          #pragma omp task
-          {
-
-            MORGAN morgan = mpu.second;
-            MPU samuQl = morgan->getSamu();
-            char ** prev = morgan->getPrev();
-            char ** fp = morgan->getFp();
-            char ** fr = morgan->getFr();
-
-            SPOTriplet response = samuQl[r][c] ( reality[r][c], prg, isLearning == 0 );
-
-     //       if ( reality[r][c] )
-	    if (prev[r][c] && reality[r][c] )
-              {
-                ++morgan->vsum;
-                if ( reality[r][c] == prev[r][c] )
-                  {
-                    ++morgan->sum;
-                  }
-              }
-
-
-            if ( reality[r][c] == prev[r][c] )
-              {
-                if ( fp[r][c] < 255-60 )
-                  {
-                    fp[r][c]+=60;
-                  }
-              }
-            else
-              {
-                if ( fp[r][c] > 60 )
-                  {
-                    fp[r][c]-=60;
-                  }
-              }
-
-
-            fr[r][c] = samuQl[r][c].getNumRules();
-
-            prev[r][c] = predictions[r][c] = response;
-
-            if ( isLearning>0 && predictions[r][c] == 0 )
-              {
-                predictions[r][c] = isLearning;
-              }
-
-          }
-        }// for
-
-    }
-
-  }
-  /*        }
-
-      }
-  */
-  //return sum;
-}
-
-
-int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isLearning, int & vsum )
+int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLearning, int & vsum )
 {
 
   MPU samuQl = morgan->getSamu();
-  char ** prev = morgan->getPrev();
-  char ** fp = morgan->getFp();
-  char ** fr = morgan->getFr();
+  int ** prev = morgan->getPrev();
+  int ** fp = morgan->getFp();
+  int ** fr = morgan->getFr();
 
   //double img_input[40];
-  //int colors[256];
+  int colors[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   int sum {0};
 
   vsum = 0;
@@ -537,19 +318,7 @@ int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isL
       for ( int c {0}; c<m_w; ++c )
         {
 
-          //std::stringstream ss;
-          //int ii {0};
-
-//          unsigned long long prg {1};
-
-
-
-          int colors[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-          unsigned long long prg {1};
-
-
-
-          //std::stringstream ss;
+          std::stringstream ss;
           int ii {0};
 
           for ( int ci {0}; ci<5; ++ci )
@@ -588,135 +357,19 @@ int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isL
 
                 } // if
 
-          /*
-          prg *= prime[colors[0]];
-          prg *= prime[colors[1]];
-          prg *= prime[colors[2]];
-          prg *= prime[colors[3]];
-          prg *= prime[colors[4]];
-          */
+          ss << reality[r][c];
+          ss << '|';
+          ss << colors[0]; //img_input[1];
+          ss << '|';
+          ss << colors[1];
+          ss << '|';
+          ss << colors[2];
+          ss << '|';
+          ss << colors[3];
+          ss << '|';
+          ss << colors[4];
 
-          prg *= prime[colors[0]];
-          prg *= prime[10+colors[1]];
-          prg *= prime[2*10+colors[2]];
-          prg *= prime[3*10+colors[3]];
-          prg *= prime[4*10+colors[4]];
-          prg *= prime[5*10+reality[r][c]];
-
-
-          /*
-                for ( int ci {0}; ci<5; ++ci )
-                  {
-                    colors[ci] = 0;
-                  }
-          */
-          /*
-
-                for ( int i {-1}; i<2; ++i )
-                  for ( int j {-1}; j<2; ++j )
-
-                    if ( ! ( ( i==0 ) && ( j==0 ) ) )
-
-                      {
-                        int o = c + j;
-                        if ( o < 0 )
-                          {
-                            o = m_w-1;
-                          }
-                        else if ( o >= m_w )
-                          {
-                            o = 0;
-                          }
-
-                        int s = r + i;
-                        if ( s < 0 )
-                          {
-                            s = m_h-1;
-                          }
-                        else if ( s >= m_h )
-                          {
-                            s = 0;
-                          }
-
-                        ++colors[reality[s][o]];
-
-
-                      } // if
-
-                  */
-
-
-          //ss << reality[r][c];
-          //ss << '|';
-          /*
-                    prg *= prime[0];
-                    prg *= prime[13+reality[r][c]];
-
-                    if ( c>2 )
-                      {
-                        prg *= prime[1];
-                        prg *= prime[14+ reality[r][c-1]]; //img_input[1];
-                        prg *= prime[2];
-                        prg *= prime[15+  reality[r][c-2]]; //img_input[1];
-                        prg *= prime[3];
-                        prg *= prime[16+  reality[r][c-3]]; //img_input[1];
-
-                      }
-                    else if ( c>1 )
-                      {
-                        prg *= prime[4];
-                        prg *= prime[17+  reality[r][c-1]]; //img_input[1];
-                        prg *= prime[5];
-                        prg *= prime[18+  reality[r][c-2]]; //img_input[1];
-
-                      }
-                    else if ( c >0 )
-                      {
-                        prg *= prime[6];
-                        prg *= prime[19+  reality[r][c-1]]; //img_input[1];
-                      }
-
-                    if ( c<m_w-3 )
-                      {
-                        prg *= prime[7];
-                        prg *= prime[20+  reality[r][c+1]]; //img_input[1];
-                        prg *= prime[8];
-                        prg *= prime[21+  reality[r][c+2]]; //img_input[1];
-                        prg *= prime[9];
-                        prg *= prime[22+  reality[r][c+3]]; //img_input[1];
-
-
-                      }
-                    else if ( c<m_w-2 )
-                      {
-                        prg *= prime[10];
-                        prg *= prime[23+  reality[r][c+1]]; //img_input[1];
-                        prg *= prime[11];
-                        prg *= prime[24+  reality[r][c+2]]; //img_input[1];
-                      }
-                    else if ( c <m_w-1 )
-                      {
-                        prg *= prime[12];
-                        prg *= prime[25+  reality[r][c+1]]; //img_input[1];
-                      }
-          */
-
-          /*
-                ss << reality[r][c];
-                ss << '|';
-                ss << colors[0]; //img_input[1];
-                ss << '|';
-                ss << colors[1];
-                ss << '|';
-                ss << colors[2];
-                ss << '|';
-                ss << colors[3];
-                ss << '|';
-                ss << colors[4];
-
-          */
-
-          //std::string prg = ss.str();
+          std::string prg = ss.str();
 
           // with NNs
           //SPOTriplet response = samuQl[r][c] ( lattice[r][c], prg, img_input );
@@ -725,17 +378,10 @@ int SamuBrain::pred ( MORGAN morgan, char **reality, char **predictions, int isL
           //  prev[r][c] = samuQl[r][c].action();// mintha a samuQl hívása után a predikciót mentettem volna el (B)
           //predictions[r][c] =  prev[r][c];
 
-/*
-          qDebug() << "   PPP:"
-                   << m_internal_clock
-                   << ( int ) reality[r][c]
-                   << prg << "%";
-*/
-
           SPOTriplet response = samuQl[r][c] ( reality[r][c], prg, isLearning == 0 );
 
-          //if ( reality[r][c] )
-if ( prev[r][c] && reality[r][c])	  
+          if ( reality[r][c] )
+//          if ( prev[r][c] && reality[r][c])
             //if ( ( predictions[r][c] == reality[r][c] ) && ( reality[r][c] != 0 ) )
             {
               ++vsum;
@@ -854,18 +500,20 @@ bool SamuBrain::is_habituation ( int q, int w, int e, int r, int t, int z, int &
 
 bool Habituation::is_newinput ( int vsum, int sum ) //, double &mon )
 {
-  if(!sum && !vsum)
-  return (( sum <= masum+1 ) || ( vsum <= mavsum+1 )) && (masum-sum >2);
-  else
-//  return ( sum <= masum+1 ) || ( vsum <= mavsum+1 );
-  return ( sum < masum ) || ( vsum < mavsum );
-  
+// return ( sum < masum ) || ( vsum < mavsum );
+  return (
+           ( vsum != sum ) && ( ( sum < masum ) || ( vsum < mavsum ) || ( ssum +1 < sum10 ) )
+         )
+         ||
+         ( vsum == sum && ( ( mavsum - asum[ma_limit-1] ) >= 4 ) );
+
 }
 
 bool Habituation::is_habituation ( int vsum, int sum, double &mon )
 {
 
-  int ssum {0};
+  //int ssum {0};
+  ssum = 0;
   int svsum {0};
 
   for ( int ci {0}; ci<ma_limit-1; ++ci )
@@ -887,12 +535,15 @@ bool Habituation::is_habituation ( int vsum, int sum, double &mon )
   t= masum - msum[ma_limit-1];
   z = mavsum - asum[ma_limit-1];
 
+  if ( ( ++counter ) % 15 == 0 )
+    sum10	= ssum;
 
   qDebug() << "   HABITUATION MONITOR:"
            << "(isHABI MPU)"
            << vsum << sum << mavsum << masum
            << masum - msum[ma_limit-1]
-           << mavsum - asum[ma_limit-1];
+           << mavsum - asum[ma_limit-1]
+           << "|||" << sum10 << ssum;
 
   if ( q != 0
        && q == w
@@ -960,13 +611,15 @@ bool Habituation::is_habituation ( int vsum, int sum, double &mon )
 }
 
 
-void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char ***fr )
+void SamuBrain::learning ( int **reality, int **predictions, int ***fp, int ***fr )
 {
   this->fp = fp;
   this->fr = fr;
 
   ++m_internal_clock;
 
+  int sum {0};
+  int vsum {0};
 
   if ( m_searching )
     {
@@ -976,139 +629,44 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
 
       MORGAN maxSamuQl {nullptr};
 
-      //#pragma omp parallel for
-
-      /*
-      #pragma omp parallel
-      {
-        #pragma omp single
-        {
-
-          for ( auto mpu : m_brain )
-            {
-
-              #pragma omp task
-              {
-      */
-
-      for ( auto mpu : m_brain )
-        {
-
-          MORGAN morgan = mpu.second;
-          morgan->sum = 0;
-          morgan->vsum = 0;
-
-        }
-
-
-      for ( int r {0}; r<m_h; ++r )
-        {
-          for ( int c {0}; c<m_w; ++c )
-            {
-
-              apred ( r, c, reality, predictions, 4 );
-
-            }
-
-        }
-      /*
-      for ( int r {0}; r<m_h; ++r )
-      {
-        for ( int c {0}; c<m_w; ++c )
-          {
-      */
       int ell = 0	;
 
 
-      /* 20 - real 2m37 vs. 4m54
-            #pragma omp parallel
-      {
-      #pragma omp single
-      {
-
-        for ( auto mpu : m_brain )
-          {
-
-            #pragma omp task
-            {
-      */
-      for ( auto mpu : m_brain )
+      for ( auto& mpu : m_brain )
         {
-
-
-
-          int sum {0};
-          int vsum {0};
-
 
           MORGAN morgan = mpu.second;
 
-          //sum = pred ( morgan, reality, predictions, 4, vsum );
-          sum = morgan->sum;
-          vsum = morgan->vsum;
+          sum = pred ( morgan, reality, predictions, 4, vsum );
 
           double mon {-1.0};
           Habituation &h = morgan->getHabituation();
           bool habi =
             h.is_habituation ( vsum, sum, mon );
-          /*
-                        qDebug() << "   HABITUATION MONITOR:"
-                                 << m_internal_clock
-                                 << "[SEARCHING] MPU:" << mpu.first.c_str()
-                                 << "bogocertainty of convergence:"
-                                 << mon*100 << "%";
-          */
-          if ( habi || mon >= 1.0) //.9 )//1.0 ) //.9 )
-            {
-              maxSamuQl = mpu.second;
-              ++ell;
-	      
-	      
-          qDebug() << "   KNOWLEDGE MONITOR:"
-                   << m_internal_clock
-                   << "[DETECTED] MPU:" << mpu.first.c_str()
-                   << "ELL" << ell;
-	      
-            }
 
           qDebug() << "   HABITUATION MONITOR:"
                    << m_internal_clock
                    << "[SEARCHING] MPU:" << mpu.first.c_str()
                    << "bogocertainty of convergence:"
-                   << mon*100 << "%" << "ELL" << ell;
+                   << mon*100 << "%";
 
-		   
-/*
-                  if ( h.is_newinput ( vsum, sum ) && !m_habituation )
+          if ( habi || mon >= 1.0 ) //.9 )
             {
-              qDebug() << "   SENSITIZATION MONITOR:"
+              maxSamuQl = mpu.second;
+              break;
+              ++ell;
+
+              qDebug() << "   KNOWLEDGE MONITOR:"
                        << m_internal_clock
-                       << "(new input detected)";
+                       << "[DETECTED] MPU:" << mpu.first.c_str()
+                       << "ELL" << ell;
+            }
 
-              m_searching = true;
-              m_searchingStart = m_internal_clock;
-
-              init_MPUs ( false );
-
-            }		  
-*/            
-            
-            
-        }
+        } // for MPUs
         
+      if(ell)  
+      qDebug() << "   KNOWLEDGE MONITOR:";
 
-
-        
-      /*
-              }
-      	}
-      	*/
-      /*
-                    }//task
-                  } // for MPUs
-              }//single
-            }//para
-      */
 
       // nem baj, ha sokáig kell menni, mert a párhuzamos szálakból a kiválasztott
       // folytatódik, a párhuzamosság a költség, meg ha nem talál, hanem új MPU kell...
@@ -1156,10 +714,6 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
   else
     {
 
-      int sum {0};
-      int vsum {0};
-
-
       //sum = pred ( reality, predictions, !searching, vsum ); //!haveAlreadyLearnt, vsum );
       sum = pred ( reality, predictions, m_haveAlreadyLearnt?5:0, vsum );
 
@@ -1181,8 +735,6 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
             {
 
               m_haveAlreadyLearnt = true;
-
-              m_haveAlreadyLearntSignal = true;
 
               int t = m_internal_clock - m_haveAlreadyLearntTime;
               if ( t > m_maxLearningTime )
@@ -1209,17 +761,25 @@ void SamuBrain::learning ( char **reality, char **predictions, char ***fp, char 
                    << "bogocertainty of convergence:"
                    << mon*100 << "%";
 
-          if ( h.is_newinput ( vsum, sum ) && !m_habituation /*&& mon != -1.0*/  /*&& mon != 1.0*/ )
+          if ( h.is_newinput ( vsum, sum ) ) // && !m_habituation ) //&& mon != -1.0  /*&& mon != 1.0*/ )
             {
-              qDebug() << "   SENSITIZATION MONITOR:"
-                       << m_internal_clock
-                       << "(new input detected)";
 
-              m_searching = true;
-              m_searchingStart = m_internal_clock;
+              if ( ++newc >=2 )
+                {
+                  qDebug() << "   SENSITIZATION MONITOR:"
+                           << m_internal_clock
+                           << "(new input detected)";
 
-              init_MPUs ( false );
+                  m_searching = true;
+                  m_searchingStart = m_internal_clock;
 
+                  init_MPUs ( false );
+                  newc = 0;
+                }
+            }
+          else
+            {
+              newc = 0;
             }
 
         }
@@ -1285,4 +845,5 @@ std::string SamuBrain::get_foobar ( MORGAN samuQl ) const
       return "Mystical knowledge";
     }
 }
+
 

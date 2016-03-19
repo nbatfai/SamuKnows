@@ -54,31 +54,31 @@
 GameOfLife::GameOfLife ( int w, int h ) : m_w ( w ), m_h ( h )
 {
 
-  lattices = new char**[2];
+  lattices = new int**[2];
 
-  lattices[0] = new char*[m_h];
+  lattices[0] = new int*[m_h];
   for ( int i {0}; i<m_h; ++i )
     {
-      lattices[0][i] = new char [m_w];
+      lattices[0][i] = new int [m_w];
     }
 
-  lattices[1] = new char*[m_h];
+  lattices[1] = new int*[m_h];
 
   for ( int i {0}; i<m_h; ++i )
     {
-      lattices[1][i] = new char [m_w];
+      lattices[1][i] = new int [m_w];
     }
 
-  predictions = new char*[m_h];
+  predictions = new int*[m_h];
 
   for ( int i {0}; i<m_h; ++i )
     {
-      predictions[i] = new char [m_w];
+      predictions[i] = new int [m_w];
     }
 
   latticeIndex = 0;
 
-  char ** lattice = lattices[latticeIndex];
+  int ** lattice = lattices[latticeIndex];
 
   for ( int i {0}; i<m_h; ++i )
     for ( int j {0}; j<m_w; ++j )
@@ -112,7 +112,7 @@ GameOfLife::~GameOfLife()
 }
 
 
-char ** GameOfLife::lattice()
+int ** GameOfLife::lattice()
 {
   return lattices[latticeIndex];
 }
@@ -120,7 +120,7 @@ char ** GameOfLife::lattice()
 void GameOfLife::run()
 {
 
-  char **fp, **fr;
+  int **fp, **fr;
   while ( true )
     {
       QThread::msleep ( m_delay );
@@ -157,7 +157,7 @@ void GameOfLife::pause()
   paused = !paused;
 }
 
-int GameOfLife::numberOfNeighbors ( char **lattice, int r, int c, int state )
+int GameOfLife::numberOfNeighbors ( int **lattice, int r, int c, int state )
 {
   int number {0};
 
@@ -196,7 +196,7 @@ int GameOfLife::numberOfNeighbors ( char **lattice, int r, int c, int state )
 }
 
 
-void GameOfLife::clear_lattice ( char **nextLattice )
+void GameOfLife::clear_lattice ( int **nextLattice )
 {
   for ( int i {0}; i<m_h; ++i )
     for ( int j {0}; j<m_w; ++j )
@@ -205,7 +205,7 @@ void GameOfLife::clear_lattice ( char **nextLattice )
       }
 }
 
-void GameOfLife::fill_lattice ( char **nextLattice, int color )
+void GameOfLife::fill_lattice ( int **nextLattice, int color )
 {
   for ( int i {0}; i<m_h; ++i )
     for ( int j {0}; j<m_w; ++j )
@@ -214,7 +214,7 @@ void GameOfLife::fill_lattice ( char **nextLattice, int color )
       }
 }
 
-void GameOfLife::control_Conway ( char **prevLattice, char **nextLattice )
+void GameOfLife::control_Conway ( int **prevLattice, int **nextLattice )
 {
   for ( int i {0}; i<m_h; ++i )
 
@@ -248,13 +248,13 @@ void GameOfLife::control_Conway ( char **prevLattice, char **nextLattice )
       }
 }
 
-void GameOfLife::control_Movie ( char **nextLattice )
+void GameOfLife::control_Movie ( int **nextLattice )
 {
   control_Movie ( nextLattice, 0 );
 }
 
 
-void GameOfLife::control_Movie ( char **nextLattice, int part )
+void GameOfLife::control_Movie ( int **nextLattice, int mode )
 {
   if ( m_time %3 ==0 )
     {
@@ -281,12 +281,18 @@ void GameOfLife::control_Movie ( char **nextLattice, int part )
         }
     }
 
-  if ( part == 1 )
-    house ( nextLattice, housex, 3*m_h/5 -6 );
-  else if ( part == 2 )
-    car ( nextLattice, carx, 3*m_h/5 +1 );
-  else if ( part == 3 )
-    man ( nextLattice, manx, 3*m_h/5-1 );
+  if ( mode == 1 )
+    {
+      house ( nextLattice, housex, 3*m_h/5 -6 );
+    }
+  else if ( mode == 2 )
+    {
+      car ( nextLattice, carx, 3*m_h/5 +1 );
+    }
+  else if ( mode == 3 )
+    {
+      man ( nextLattice, manx, 3*m_h/5-1 );
+    }
   else
     {
       house ( nextLattice, housex, 3*m_h/5 -6 );
@@ -296,7 +302,7 @@ void GameOfLife::control_Movie ( char **nextLattice, int part )
 
 }
 
-void GameOfLife::control_Stroop ( char **nextLattice )
+void GameOfLife::control_Stroop ( int **nextLattice )
 {
   if ( ++age <20 )
     {
@@ -342,60 +348,30 @@ void GameOfLife::control_Stroop ( char **nextLattice )
 
 }
 
-void GameOfLife::ticker ( char **lattice, std::string & hello )
-{
-  //static int xx = 34;//hello.length();
-
-  int l = hello.length();
-
-  for ( int i {0}; i<l; ++i )
-    {
-      if ( xx+i >= 0 && xx+i < m_w )
-        {
-
-          char c = hello[i];
-          lattice[0][xx+i] = c;
-
-        }
-    }
-
-  --xx;
-  if ( xx< ( -1*l ) )
-    {
-      xx= 34;  //hello.length();
-    }
-
-}
-
-
 void GameOfLife::development()
 {
 
-  char **prevLattice = lattices[latticeIndex];
-  char **nextLattice = lattices[ ( latticeIndex+1 ) %2];
+  int **prevLattice = lattices[latticeIndex];
+  int **nextLattice = lattices[ ( latticeIndex+1 ) %2];
 
   clear_lattice ( nextLattice );
-/*
-  if ( m_time == 1 )
-    {
-      //clear_lattice ( nextLattice );
 
-      glider ( nextLattice, 2*m_w/5, 2*m_h/5 );
-      glider ( nextLattice, 3*m_w/5, 3*m_h/5 );
-      glider ( nextLattice, 4*m_w/5, 4*m_h/5 );
-      glider ( nextLattice, 4*m_w/5, 2*m_h/5 );
-      glider ( nextLattice, 2*m_w/5, 4*m_h/5 );
 
-    }
-  else if ( m_time < 5000 )
+  if ( m_time < 3000 )
     {
-      control_Conway ( prevLattice, nextLattice );
+      control_Movie ( nextLattice, 1 );
+//      control_Conway ( prevLattice, nextLattice );
     }
-  else if ( m_time < 13000 )
+  else if ( m_time < 6000 )
     {
-      control_Stroop ( nextLattice );
+      control_Movie ( nextLattice, 2 );
+//      control_Stroop ( nextLattice );
     }
-  else if ( m_time < 22000 )
+  else if ( m_time < 10000 )
+    {
+      control_Movie ( nextLattice, 3 );
+    }
+  else if ( m_time < 16000 )
     {
       control_Movie ( nextLattice );
     }
@@ -403,36 +379,27 @@ void GameOfLife::development()
     {
       m_time = -1;
     }
-*/
 
-if ( m_time < 4000 )
-    {
-      control_Movie ( nextLattice, 3 );
-    }
-  else if ( m_time < 8000 )
-    {
-      control_Movie ( nextLattice, 1 );
-    }
-  else if ( m_time < 12000 )
-    {
-      control_Movie ( nextLattice, 2 );
-    }
-  else if ( m_time < 16000 )
-    {
-      control_Movie ( nextLattice, 1 );
-    }
-  else if ( m_time < 20000 )
+  /*
+  if ( m_time < 7000 )
     {
       control_Movie ( nextLattice);
+  //      control_Conway ( prevLattice, nextLattice );
+    }
+  else if ( m_time < 10000 )
+    {
+      control_Movie ( nextLattice, 1 );
+  //      control_Stroop ( nextLattice );
     }
   else
     {
       m_time = -1;
     }
+  */
 
 }
 
-void GameOfLife::red ( char **lattice, int x, int y, int color )
+void GameOfLife::red ( int **lattice, int x, int y, int color )
 {
 
   int r[7][17] =
@@ -459,7 +426,7 @@ void GameOfLife::red ( char **lattice, int x, int y, int color )
     }
 }
 
-void GameOfLife::green ( char **lattice, int x, int y, int color )
+void GameOfLife::green ( int **lattice, int x, int y, int color )
 {
 
   int r[7][29] =
@@ -487,7 +454,7 @@ void GameOfLife::green ( char **lattice, int x, int y, int color )
     }
 }
 
-void GameOfLife::blue ( char **lattice, int x, int y, int color )
+void GameOfLife::blue ( int **lattice, int x, int y, int color )
 {
 
   int r[7][21] =
@@ -515,7 +482,7 @@ void GameOfLife::blue ( char **lattice, int x, int y, int color )
     }
 }
 
-void GameOfLife::glider ( char **lattice, int x, int y )
+void GameOfLife::glider ( int **lattice, int x, int y )
 {
 
   lattice[y+0][x+2] = 1;
@@ -526,7 +493,7 @@ void GameOfLife::glider ( char **lattice, int x, int y )
 
 }
 
-void GameOfLife::house ( char **lattice, int x, int y )
+void GameOfLife::house ( int **lattice, int x, int y )
 {
 
   lattice[y+0][x+3] = 1;
@@ -561,7 +528,7 @@ void GameOfLife::house ( char **lattice, int x, int y )
   lattice[y+8][x+6] = 1;
 }
 
-void GameOfLife::man ( char **lattice, int x, int y )
+void GameOfLife::man ( int **lattice, int x, int y )
 {
 
   lattice[y+0][x+1] = 1;
@@ -577,7 +544,7 @@ void GameOfLife::man ( char **lattice, int x, int y )
 
 }
 
-void GameOfLife::car ( char **lattice, int x, int y )
+void GameOfLife::car ( int **lattice, int x, int y )
 {
 
   lattice[y+0][x+1] = 1;

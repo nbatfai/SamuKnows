@@ -53,22 +53,18 @@
 
 SamuLife::SamuLife ( int w, int h, QWidget *parent ) : QMainWindow ( parent )
 {
-  setWindowTitle ( "SamuKnows, exp. 8, cognitive mental organs: MPU (Mental Processing Unit), COP-based Q-learning, acquiring higher-order knowledge" );
-  
-  if(2*h*m_ch > 80)
+  setWindowTitle ( "SamuBrain, exp. 8, cognitive mental organs: MPU (Mental Processing Unit), COP-based Q-learning, acquiring higher-order knowledge" );
   setFixedSize ( QSize ( 2*w*m_cw, 2*h*m_ch ) );
-else
-  setFixedSize ( QSize ( 2*w*m_cw, 80) );
-  
+
   gameOfLife = new GameOfLife ( w, h );
   gameOfLife->start();
 
-  connect ( gameOfLife, SIGNAL ( cellsChanged ( char **, char **, char **, char ** ) ),
-            this, SLOT ( updateCells ( char **, char **, char **, char ** ) ) );
+  connect ( gameOfLife, SIGNAL ( cellsChanged ( int **, int **, int **, int ** ) ),
+            this, SLOT ( updateCells ( int **, int **, int **, int ** ) ) );
 
 }
 
-void SamuLife::updateCells ( char **lattice, char **prediction, char **fp, char** fr )
+void SamuLife::updateCells ( int **lattice, int **prediction, int **fp, int** fr )
 {
   this->lattice = lattice;
   this->prediction = prediction;
@@ -103,15 +99,7 @@ void SamuLife::paintEvent ( QPaintEvent* )
               else
                 qpainter.fillRect ( j*m_cw, i*m_ch,
                                     m_cw, m_ch, Qt::white );
-
-qpainter.setPen(QPen(Qt::black, 1));
-                    qpainter.drawText(j*m_cw +2, 
-				     i*m_ch +17, 
-				      QString( QChar(lattice[i][j])));
-	      
-		
-		
-	    }
+            }
           if ( prediction )
             {
               if ( prediction[i][j] == 1 )
@@ -132,13 +120,6 @@ qpainter.setPen(QPen(Qt::black, 1));
               else
                 qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
                                     m_cw, m_ch, Qt::white );
-		
-		
-qpainter.setPen(QPen(Qt::blue, 1));
-                    qpainter.drawText(gameOfLife->getW() *m_cw +j*m_cw +2, 
-				     i*m_ch +17, 
-				      QString( QChar(prediction[i][j])));
-		
             }
 
             
@@ -188,12 +169,11 @@ qpainter.setPen(QPen(Qt::white, 1));
   font.setPointSize ( 28 );
   qpainter.setFont ( font );
   qpainter.setPen ( QPen ( Qt::black, 1 ) );
-  qpainter.drawText ( 40, 70, "Reality" );
+  qpainter.drawText ( 40, 60, "Reality" );
   qpainter.setPen ( QPen ( Qt::black, 1 ) );
-  qpainter.drawText ( gameOfLife->getW() *m_cw +40, 70, "Samus' prediction" );
+  qpainter.drawText ( gameOfLife->getW() *m_cw +40, 60, "Samu's prediction" );
   qpainter.setPen ( QPen ( Qt::darkGray, 1 ) );
-  //qpainter.drawText ( 40, gameOfLife->getH() *m_ch - 30 , QString::number ( gameOfLife->getT() ) );
-  qpainter.drawText ( gameOfLife->getW() *m_cw -140, 70 , QString::number ( gameOfLife->getT() ) );
+  qpainter.drawText ( 40, gameOfLife->getH() *m_ch - 30 , QString::number ( gameOfLife->getT() ) );
 
   qpainter.end();
 }

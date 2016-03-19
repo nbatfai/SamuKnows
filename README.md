@@ -28,9 +28,11 @@ Here the video of SamuMovie is divided into its three subcomponents: the house, 
 First I teach the agent to recognize these standalone subcomponents. 
 Then the agent should detect the house and the moving car and man in the original SamuMovie video.
 
-
 ## Usage
 
+### vSamuBrain
+
+Using the selection mechanism of SamuVocab for detecting sub-processes looks like a dead-end so I return to the original SamuBrain: [https://youtu.be/MLOeNNqd2Nw](https://youtu.be/MLOeNNqd2Nw)
 
 ## Previous other experiments
 

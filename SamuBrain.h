@@ -110,7 +110,7 @@ class MentalProcessingUnit
 {
     int m_w {40}, m_h {30};
     MPU m_samuQl;
-    Habituation m_habi;
+    Habituation m_habi, habi2;
 
     int **m_prev;
     int** fr;
@@ -134,6 +134,9 @@ public:
     }
     Habituation& getHabituation() {
         return m_habi;
+    }
+    Habituation& getHabituation2() {
+        return habi2;
     }
 
     void cls();
@@ -160,8 +163,8 @@ class SamuBrain
     bool m_habituation {false};
 
     MORGAN newMPU ();
-    int pred ( int **reality, int **predictions, int, int & );
-    int pred ( MORGAN, int **reality, int **predictions, int, int & );
+    int pred ( int **reality, int **predictions, int, int &, int &, int & );
+    int pred ( MORGAN, int **reality, int **predictions, int, int &, int &, int & );
     void init_MPUs ( bool ex );
     std::string get_foobar ( MORGAN ) const;
 

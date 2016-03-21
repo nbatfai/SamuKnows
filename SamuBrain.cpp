@@ -192,9 +192,9 @@ double SamuBrain::howMuchLearned ( MPU samuQl ) const
 }
 */
 
-int SamuBrain::pred ( int **reality, int **predictions, int isLearning, int & vsum )
+int SamuBrain::pred ( int **reality, int **predictions, int isLearning, int & vsum, int & sum2, int & vsum2 )
 {
-  return pred ( m_morgan, reality, predictions, isLearning, vsum );
+  return pred ( m_morgan, reality, predictions, isLearning, vsum, sum2, vsum2 );
 }
 
 /*
@@ -299,7 +299,7 @@ int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLea
 }
 */
 
-int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLearning, int & vsum )
+int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLearning, int & vsum, int & sum2, int & vsum2  )
 {
 
   MPU samuQl = morgan->getSamu();
@@ -311,7 +311,7 @@ int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLea
   int colors[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   int sum {0};
 
-  vsum = 0;
+  vsum = sum2 = vsum2 = 0;
 
   for ( int r {0}; r<m_h; ++r )
     {
@@ -380,6 +380,20 @@ int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLea
 
           SPOTriplet response = samuQl[r][c] ( reality[r][c], prg, isLearning == 0 );
 
+//          if ( prev[r][c] )
+          if ( prev[r][c] && reality[r][c])
+            //if ( ( predictions[r][c] == reality[r][c] ) && ( reality[r][c] != 0 ) )
+            {
+              ++vsum2;
+              //if (  samuQl[r][c].reward() == samuQl[r][c].get_max_reward()/*reality[r][c] == prev[r][c]*/ )
+              if ( reality[r][c] == prev[r][c] )
+                {
+                  ++sum2;
+//		  if(!isLearning)
+//		  ++fp[r][c];
+                }
+            }	  
+	  
           if ( reality[r][c] )
 //          if ( prev[r][c] && reality[r][c])
             //if ( ( predictions[r][c] == reality[r][c] ) && ( reality[r][c] != 0 ) )
@@ -620,6 +634,8 @@ void SamuBrain::learning ( int **reality, int **predictions, int ***fp, int ***f
 
   int sum {0};
   int vsum {0};
+  int sum2 {0};
+  int vsum2 {0};
 
   if ( m_searching )
     {
@@ -637,9 +653,24 @@ void SamuBrain::learning ( int **reality, int **predictions, int ***fp, int ***f
 
           MORGAN morgan = mpu.second;
 
-          sum = pred ( morgan, reality, predictions, 4, vsum );
+          sum = pred ( morgan, reality, predictions, 4, vsum, sum2, vsum2 );
 
-          double mon {-1.0};
+          double mon {-1.0}, mon2{-1.0};
+	  
+          Habituation &h2 = morgan->getHabituation2();
+	  
+          bool habi2 =
+            h2.is_habituation ( vsum2, sum2, mon2 );
+	 
+	    
+	      qDebug() << "   HABI2 MONITOR:"
+                  << m_internal_clock
+                   << "[SEARCHING] MPU:" << mpu.first.c_str()
+		   << vsum2 << sum2 
+                   << "bogocertainty of convergence:"
+                   << mon2*100 << "%";
+	    
+	    
           Habituation &h = morgan->getHabituation();
           bool habi =
             h.is_habituation ( vsum, sum, mon );
@@ -650,18 +681,25 @@ void SamuBrain::learning ( int **reality, int **predictions, int ***fp, int ***f
                    << "bogocertainty of convergence:"
                    << mon*100 << "%";
 
-          if ( habi || mon >= 1.0 ) //.9 )
+
+          if ( habi2 || mon2 >= .9 ) //.9 )
             {
-              maxSamuQl = mpu.second;
-              break;
               ++ell;
 
               qDebug() << "   KNOWLEDGE MONITOR:"
                        << m_internal_clock
                        << "[DETECTED] MPU:" << mpu.first.c_str()
                        << "ELL" << ell;
+            }            
+            
+            
+          if ( maxSamuQl == nullptr && (habi || mon >= 1.0) ) //.9 )
+            {
+              maxSamuQl = mpu.second;
+              //break;
             }
-
+            
+            
         } // for MPUs
         
       if(ell)  
@@ -715,7 +753,7 @@ void SamuBrain::learning ( int **reality, int **predictions, int ***fp, int ***f
     {
 
       //sum = pred ( reality, predictions, !searching, vsum ); //!haveAlreadyLearnt, vsum );
-      sum = pred ( reality, predictions, m_haveAlreadyLearnt?5:0, vsum );
+      sum = pred ( reality, predictions, m_haveAlreadyLearnt?5:0, vsum, sum2, vsum2 );
 
       double mon {-1.0};
       Habituation& h = m_morgan->getHabituation();
@@ -807,11 +845,17 @@ void SamuBrain::init_MPUs ( bool ex )
           if ( mpu.second != m_morgan )
             {
               morgan->getHabituation().clear();
+	      
+              morgan->getHabituation2().clear();
+	      
             }
         }
       else
         {
           morgan->getHabituation().clear();
+	  
+	                morgan->getHabituation2().clear();
+
         }
 
       morgan->cls();

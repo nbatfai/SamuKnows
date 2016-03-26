@@ -51,16 +51,19 @@
 
 #include "SamuLife.h"
 
-SamuLife::SamuLife ( int w, int h, QWidget *parent ) : QMainWindow ( parent )
+SamuLife::SamuLife ( std::string videoStream, int w, int h, QWidget *parent ) : QMainWindow ( parent )
 {
-  setWindowTitle ( "SamuBrain, exp. 8, cognitive mental organs: MPU (Mental Processing Unit), COP-based Q-learning, acquiring higher-order knowledge" );
+  setWindowTitle ( "SamuCam, exp. 10, cognitive mental organs: MPU (Mental Processing Unit), COP-based Q-learning, acquiring higher-order knowledge" );
   setFixedSize ( QSize ( 2*w*m_cw, 2*h*m_ch ) );
 
-  gameOfLife = new GameOfLife ( w, h );
+  gameOfLife = new GameOfLife ( videoStream, w, h );
   gameOfLife->start();
 
   connect ( gameOfLife, SIGNAL ( cellsChanged ( int **, int **, int **, int ** ) ),
             this, SLOT ( updateCells ( int **, int **, int **, int ** ) ) );
+
+  connect ( gameOfLife->getSamuCam(), SIGNAL ( webcamChanged ( QImage * ) ),
+            this, SLOT ( updateFace ( QImage* ) ) );
 
 }
 
@@ -71,6 +74,18 @@ void SamuLife::updateCells ( int **lattice, int **prediction, int **fp, int** fr
   this->fp = fp;
   this->fr = fr;
   update();
+}
+
+void SamuLife::updateFace ( QImage* webcamp )
+{
+  if ( webcamp )
+    {
+      webcam = *webcamp;
+      delete webcamp;
+
+      this->webcamp = &webcam;
+      update();
+    }
 }
 
 void SamuLife::paintEvent ( QPaintEvent* )
@@ -84,70 +99,80 @@ void SamuLife::paintEvent ( QPaintEvent* )
 
           if ( lattice )
             {
-              if ( lattice[i][j] == 1 )
-                qpainter.fillRect ( j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::red );
-              else if ( lattice[i][j] == 2 )
-                qpainter.fillRect ( j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::green );
-              else if ( lattice[i][j] == 3 )
-                qpainter.fillRect ( j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::blue );
-              else if ( lattice[i][j] == 4 )
-                qpainter.fillRect ( j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::magenta );
-              else
-                qpainter.fillRect ( j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::white );
+              /*
+                    if ( lattice[i][j] == 1 )
+                      qpainter.fillRect ( j*m_cw, i*m_ch,
+                                          m_cw, m_ch, Qt::red );
+                    else if ( lattice[i][j] == 2 )
+                      qpainter.fillRect ( j*m_cw, i*m_ch,
+                                          m_cw, m_ch, Qt::green );
+                    else if ( lattice[i][j] == 3 )
+                      qpainter.fillRect ( j*m_cw, i*m_ch,
+                                          m_cw, m_ch, Qt::blue );
+                    else if ( lattice[i][j] == 4 )
+                      qpainter.fillRect ( j*m_cw, i*m_ch,
+                                          m_cw, m_ch, Qt::magenta );
+                    else
+                      qpainter.fillRect ( j*m_cw, i*m_ch,
+                                          m_cw, m_ch, Qt::white );
+                                          */
+              qpainter.fillRect ( j*m_cw, i*m_ch,
+                                  m_cw, m_ch, qRgb ( lattice[i][j] ,lattice[i][j], lattice[i][j] ) );
+
             }
           if ( prediction )
             {
-              if ( prediction[i][j] == 1 )
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::red );
-              else if ( prediction[i][j] == 2 )
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::green );
-              else if ( prediction[i][j] == 3 )
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::blue );
-              else if ( prediction[i][j] == 4 )
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::yellow );
-              else if ( prediction[i][j] == 5 )
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::cyan );
-              else
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
-                                    m_cw, m_ch, Qt::white );
+              /*
+                          if ( prediction[i][j] == 1 )
+                            qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                                m_cw, m_ch, Qt::red );
+                          else if ( prediction[i][j] == 2 )
+                            qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                                m_cw, m_ch, Qt::green );
+                          else if ( prediction[i][j] == 3 )
+                            qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                                m_cw, m_ch, Qt::blue );
+                          else if ( prediction[i][j] == 4 )
+                            qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                                m_cw, m_ch, Qt::yellow );
+                          else if ( prediction[i][j] == 5 )
+                            qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                                m_cw, m_ch, Qt::cyan );
+                          else
+                            qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                                m_cw, m_ch, Qt::white );
+                                                */
+
+              qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, i*m_ch,
+                                  m_cw, m_ch,qRgb ( prediction[i][j] ,prediction[i][j], prediction[i][j] ) );
+
+
             }
 
-            
+
           if ( fp )
             {
-                qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw, 
-				    gameOfLife->getH() *m_ch + i*m_ch,
-                                    m_cw, m_ch, qRgb(fp[i][j] ,0,0) );
+              qpainter.fillRect ( gameOfLife->getW() *m_cw + j*m_cw,
+                                  gameOfLife->getH() *m_ch + i*m_ch,
+                                  m_cw, m_ch, qRgb ( fp[i][j] ,0,0 ) );
             }
-            
+
           if ( fr )
             {
-                qpainter.fillRect (  j*m_cw, 
-				    gameOfLife->getH() *m_ch + i*m_ch,
-                                    m_cw, m_ch, qRgb(fr[i][j]*18 ,0,0) );
-		
-		
-		
-qpainter.setPen(QPen(Qt::white, 1));
-                    qpainter.drawText(j*m_cw +2, 
-				    gameOfLife->getH() *m_ch + i*m_ch +17, 
-				      QString::number(fr[i][j]));
-		
+              qpainter.fillRect ( j*m_cw,
+                                  gameOfLife->getH() *m_ch + i*m_ch,
+                                  m_cw, m_ch, qRgb ( fr[i][j]*18 ,0,0 ) );
+
+
+
+              qpainter.setPen ( QPen ( Qt::white, 1 ) );
+              qpainter.drawText ( j*m_cw +2,
+                                  gameOfLife->getH() *m_ch + i*m_ch +17,
+                                  QString::number ( fr[i][j] ) );
+
             }
 
-
-            
-            qpainter.setPen ( QPen ( Qt::lightGray, 1 ) );
+          qpainter.setPen ( QPen ( Qt::lightGray, 1 ) );
 
           qpainter.drawRect ( j*m_cw, i*m_ch,
                               m_cw, m_ch );
@@ -160,6 +185,7 @@ qpainter.setPen(QPen(Qt::white, 1));
         }
     }
 
+
   qpainter.setPen ( QPen ( Qt::black, 1 ) );
 
   qpainter.drawLine ( gameOfLife->getW() *m_cw, 0,
@@ -171,9 +197,23 @@ qpainter.setPen(QPen(Qt::white, 1));
   qpainter.setPen ( QPen ( Qt::black, 1 ) );
   qpainter.drawText ( 40, 60, "Reality" );
   qpainter.setPen ( QPen ( Qt::black, 1 ) );
-  qpainter.drawText ( gameOfLife->getW() *m_cw +40, 60, "Samu's prediction" );
+  qpainter.drawText ( gameOfLife->getW() *m_cw +40, 60, "Samus' prediction" );
   qpainter.setPen ( QPen ( Qt::darkGray, 1 ) );
   qpainter.drawText ( 40, gameOfLife->getH() *m_ch - 30 , QString::number ( gameOfLife->getT() ) );
+
+
+  if ( webcamp )
+    {
+      QPoint p ( gameOfLife->getW() *m_cw - webcamp->width() /2,
+                 gameOfLife->getH() *m_ch - webcamp->height() /2 );
+
+
+      qpainter.drawImage ( p, *webcamp );
+
+      qpainter.drawRect ( gameOfLife->getW() *m_cw - webcamp->width() /2,
+                          gameOfLife->getH() *m_ch - webcamp->height() /2, webcamp->width(), webcamp->height() );
+
+    }
 
   qpainter.end();
 }

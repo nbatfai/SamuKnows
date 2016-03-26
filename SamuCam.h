@@ -1,3 +1,6 @@
+#ifndef SamuCam_H
+#define SamuCam_H
+
 /**
  * @brief Samu has learnt the rules of Conway's Game of Life
  *
@@ -7,7 +10,7 @@
  *
  * @section LICENSE
  *
- * Copyright (C) 2015, 2016 Norbert Bátfai, batfai.norbert@inf.unideb.hu
+ * Copyright (C) 2015, 2016 Norbert Bátfai, batfai.norbert@inf.unideb.hu, nbatfai@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,36 +51,40 @@
  * https://youtu.be/VujHHeYuzIk
  */
 
+#include "opencv2/objdetect.hpp"
+#include "opencv2/videoio.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
 
-#include <QApplication>
+#include <iostream>
+#include <stdio.h>
+#include <sstream>
+
+#include <QThread>
 #include <QDebug>
-#include <QCommandLineParser>
+#include <QImage>
 
-#include "SamuLife.h"
-
-int main ( int argc, char** argv )
+class SamuCam : public QThread
 {
-  QApplication app ( argc, argv );
+    Q_OBJECT
 
-  QCoreApplication::setApplicationName ( "SamuCam" );
-  QCoreApplication::setApplicationVersion ( "0.0.1" );
+public:
+    SamuCam ( std::string videoStream, int width, int height );
+    ~SamuCam();
 
-  QCommandLineParser parser;
-  parser.setApplicationDescription ( "This is a necessary step towards a successful implementation of the project Robopsychology One." );
-  parser.addHelpOption();
-  parser.addVersionOption();
+    void openVideoStream();
+    void run();
 
-  QCommandLineOption webcamipOption ( QStringList() << "ip" << "webcamip",
-                                      QCoreApplication::translate ( "main", "Specify IP address of your IP webcam app on Android phone (default is http://192.168.0.18:8080/video?x.mjpeg)." ),
-                                      QCoreApplication::translate ( "main", "webcamip" ), "http://192.168.0.18:8080/video?x.mjpeg" );
-  parser.addOption ( webcamipOption );
+private:
+    std::string videoStream;
+    cv::VideoCapture videoCapture;
+    int width;
+    int height;
+    int fps;
 
-  parser.process ( app );
-  std::string videoStream = parser.value ( webcamipOption ).toStdString();
+signals:
+    void faceChanged ( QImage * );
+    void webcamChanged ( QImage * );
+};
 
-  SamuLife samulife ( videoStream, 176, 144 ); //( 34, 16 );
-  samulife.show();
-
-
-  return app.exec();
-}
+#endif

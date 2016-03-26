@@ -10,11 +10,12 @@ QT += widgets core
 CONFIG += c++14
 QMAKE_CXXFLAGS += -fopenmp
 LIBS += -fopenmp
+LIBS += `pkg-config --libs opencv`
 
 TEMPLATE = app
-TARGET = SamuKnows
+TARGET = SamuCam
 INCLUDEPATH += .
 
 # Input
-HEADERS += SamuBrain.h GameOfLife.h SamuLife.h SamuQl.h
-SOURCES +=  main.cpp SamuLife.cpp GameOfLife.cpp SamuBrain.cpp
+HEADERS +=  SamuCam.h SamuBrain.h GameOfLife.h SamuLife.h SamuQl.h
+SOURCES +=  SamuCam.cpp main.cpp SamuLife.cpp GameOfLife.cpp SamuBrain.cpp 

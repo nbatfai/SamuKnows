@@ -51,7 +51,7 @@
 
 #include "GameOfLife.h"
 
-GameOfLife::GameOfLife ( int w, int h ) : m_w ( w ), m_h ( h )
+GameOfLife::GameOfLife ( std::string videoStream, int w, int h ) : m_w ( w ), m_h ( h )
 {
 
   lattices = new int**[2];
@@ -92,6 +92,32 @@ GameOfLife::GameOfLife ( int w, int h ) : m_w ( w ), m_h ( h )
   manx = m_w/2;
   housex = 2*m_w/5;
 
+  samuCam = new SamuCam ( videoStream, m_w, m_h );
+
+  connect ( samuCam, SIGNAL ( faceChanged ( QImage * ) ),
+            this, SLOT ( updateFace ( QImage* ) ) );
+
+}
+
+void GameOfLife::updateFace ( QImage *face )
+{
+  if ( face )
+    {
+      int **lattice = lattices[ ( latticeIndex+1 ) %2];
+      int **lattice2 =  lattices[latticeIndex];
+
+      clear_lattice ( lattice );
+      clear_lattice ( lattice2 );
+
+      for ( int i {0}; i< face->width(); ++i )
+        for ( int j {0}; j< face->height(); ++j )
+          {
+            lattice2[j+m_h/2 - face->height() /2][i+m_w/2 - face->width() /2] =
+              lattice[j+m_h/2 - face->height() /2][i+m_w/2 - face->width() /2] = qGray ( face->pixel ( i, j ) );
+          }
+
+      delete face;
+    }
 }
 
 GameOfLife::~GameOfLife()
@@ -109,6 +135,7 @@ GameOfLife::~GameOfLife()
   delete[] lattices;
 
   delete samuBrain;
+  delete samuCam;
 }
 
 
@@ -120,6 +147,10 @@ int ** GameOfLife::lattice()
 void GameOfLife::run()
 {
 
+  samuCam->start();
+
+  int **nextLattice = lattices[ ( latticeIndex+1 ) %2];
+  clear_lattice ( nextLattice );
   int **fp, **fr;
   while ( true )
     {
@@ -354,32 +385,32 @@ void GameOfLife::development()
   int **prevLattice = lattices[latticeIndex];
   int **nextLattice = lattices[ ( latticeIndex+1 ) %2];
 
-  clear_lattice ( nextLattice );
+  //clear_lattice ( nextLattice );
 
-
-  if ( m_time < 3000 )
-    {
-      control_Movie ( nextLattice, 1 );
-//      control_Conway ( prevLattice, nextLattice );
-    }
-  else if ( m_time < 6000 )
-    {
-      control_Movie ( nextLattice, 2 );
-//      control_Stroop ( nextLattice );
-    }
-  else if ( m_time < 10000 )
-    {
-      control_Movie ( nextLattice, 3 );
-    }
-  else if ( m_time < 16000 )
-    {
-      control_Movie ( nextLattice );
-    }
-  else
-    {
-      m_time = -1;
-    }
-
+  /*
+    if ( m_time < 3000 )
+      {
+        control_Movie ( nextLattice, 1 );
+  //      control_Conway ( prevLattice, nextLattice );
+      }
+    else if ( m_time < 6000 )
+      {
+        control_Movie ( nextLattice, 2 );
+  //      control_Stroop ( nextLattice );
+      }
+    else if ( m_time < 10000 )
+      {
+        control_Movie ( nextLattice, 3 );
+      }
+    else if ( m_time < 16000 )
+      {
+        control_Movie ( nextLattice );
+      }
+    else
+      {
+        m_time = -1;
+      }
+  */
   /*
   if ( m_time < 7000 )
     {

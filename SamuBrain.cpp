@@ -308,7 +308,7 @@ int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLea
   int ** fr = morgan->getFr();
 
   //double img_input[40];
-  int colors[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  int colors[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   int sum {0};
 
   vsum = sum2 = vsum2 = 0;
@@ -321,7 +321,7 @@ int SamuBrain::pred ( MORGAN morgan, int **reality, int **predictions, int isLea
           std::stringstream ss;
           int ii {0};
 
-          for ( int ci {0}; ci<256; ++ci )
+          for ( int ci {0}; ci<5; ++ci )
             {
               colors[ci] = 0;
             }

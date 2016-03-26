@@ -56,8 +56,6 @@
 #include <QDebug>
 #include <sstream>
 #include "SamuBrain.h"
-#include "SamuCam.h"
-#include <QImage>
 
 class GameOfLife : public QThread
 {
@@ -72,7 +70,7 @@ class GameOfLife : public QThread
     SamuBrain* samuBrain;
 
     long m_time {0};
-    int m_delay {20};//{15};
+    int m_delay {1};//{15};
     long age {0};
 
     bool paused {false};
@@ -101,11 +99,8 @@ class GameOfLife : public QThread
     void control_Movie ( int **nextLattice );
     void control_Movie ( int **nextLattice, int );
     
-        SamuCam* samuCam;//("http://192.168.0.18:8080/video?x.mjpeg");
-
-    
 public:
-    GameOfLife ( std::string videoStream, int w = 30, int h = 20 );
+    GameOfLife ( int w = 30, int h = 20 );
     ~GameOfLife();
 
     void run();
@@ -123,11 +118,6 @@ public:
         }
     }
 
-    SamuCam* getSamuCam(){return samuCam;}
-    
-    public slots :
-    void updateFace ( QImage* face);    
-    
 signals:
     void cellsChanged ( int **, int **, int **, int ** );
 

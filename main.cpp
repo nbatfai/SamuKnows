@@ -50,34 +50,12 @@
 
 
 #include <QApplication>
-#include <QDebug>
-#include <QCommandLineParser>
-
 #include "SamuLife.h"
 
 int main ( int argc, char** argv )
 {
   QApplication app ( argc, argv );
-
-  QCoreApplication::setApplicationName ( "SamuCam" );
-  QCoreApplication::setApplicationVersion ( "0.0.1" );
-
-  QCommandLineParser parser;
-  parser.setApplicationDescription ( "This is a necessary step towards a successful implementation of the project Robopsychology One." );
-  parser.addHelpOption();
-  parser.addVersionOption();
-
-  QCommandLineOption webcamipOption ( QStringList() << "ip" << "webcamip",
-                                      QCoreApplication::translate ( "main", "Specify IP address of your IP webcam app on Android phone (default is http://192.168.0.18:8080/video?x.mjpeg)." ),
-                                      QCoreApplication::translate ( "main", "webcamip" ), "http://192.168.0.18:8080/video?x.mjpeg" );
-  parser.addOption ( webcamipOption );
-
-  parser.process ( app );
-  std::string videoStream = parser.value ( webcamipOption ).toStdString();
-
-  SamuLife samulife ( videoStream, 176, 144 ); //( 34, 16 );
+  SamuLife samulife ( 34, 16 );
   samulife.show();
-
-
   return app.exec();
 }

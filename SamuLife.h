@@ -62,21 +62,18 @@ class SamuLife : public QMainWindow
 {
     Q_OBJECT
 
-    int m_cw {5}, m_ch {3};
+    int m_cw {12*2}, m_ch {10*2};
     GameOfLife *gameOfLife;
     int **lattice {nullptr};
     int **prediction {nullptr};
     int **fp {nullptr};
     int **fr {nullptr};
-    QImage* webcamp {nullptr};
-    QImage webcam;
 
-public slots :
+    public slots :
     void updateCells ( int **, int **, int **, int ** );
-    void updateFace ( QImage* face );
 
 public:
-    SamuLife ( std::string videoStream, int w = 30, int h = 20, QWidget *parent = 0 );
+    SamuLife ( int w = 30, int h = 20, QWidget *parent = 0 );
     virtual ~SamuLife();
     void paintEvent ( QPaintEvent* );
     void keyPressEvent ( QKeyEvent * event );
